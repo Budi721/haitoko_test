@@ -7,7 +7,6 @@ import { AuthenticationsModule } from './api/authentications/authentications.mod
 import { ProductsModule } from './api/products/products.module';
 import { PaymentsModule } from './api/payments/payments.module';
 import { OrdersModule } from './api/orders/orders.module';
-import { CartsModule } from './api/carts/carts.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -17,7 +16,6 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     AuthenticationsModule,
     ProductsModule,
-    CartsModule,
     PaymentsModule,
     OrdersModule,
   ],

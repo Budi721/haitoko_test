@@ -16,6 +16,7 @@ import { CreateUserDto } from '../models/users.dto';
 import { UsersService } from '../services/users.service';
 import { AuthenticationsService } from '../services/authentications.service';
 import { AuthGuardJwt } from '../../../shared/guards/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -28,6 +29,7 @@ export class UsersController {
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(AuthGuardJwt)
+  @ApiBearerAuth()
   public getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.service.getUser(id);
   }

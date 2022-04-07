@@ -1,4 +1,10 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Expose } from 'class-transformer';
 import { Order } from '../orders/orders.entity';
 
@@ -8,9 +14,13 @@ export class Payment {
   @PrimaryGeneratedColumn()
   public id!: number;
 
-  @Column()
+  @Column({
+    nullable: false,
+    default: 'unpaid',
+  })
   public status: string;
 
   @OneToOne(() => Order)
+  @JoinColumn()
   public order: Order;
 }

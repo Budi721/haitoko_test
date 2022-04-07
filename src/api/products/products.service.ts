@@ -19,4 +19,11 @@ export class ProductsService {
   public getProductById(id: number): Promise<Product> {
     return this.repository.findOne(id);
   }
+
+  public getSomeProductById(id: number[]): Promise<Product[]> {
+    return this.repository
+      .createQueryBuilder('p')
+      .where('id IN(:...ids)', { ids: id })
+      .getMany();
+  }
 }

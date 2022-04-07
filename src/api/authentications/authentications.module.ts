@@ -14,7 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
     TypeOrmModule.forFeature([Authentication, User]),
     JwtModule.registerAsync({
       useFactory: () => ({
-        secret: process.env.AUTH_SECRET,
+        secret: process.env.ACCESS_TOKEN_KEY,
         signOptions: {
           expiresIn: '30m',
         },

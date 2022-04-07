@@ -1,17 +1,52 @@
-import { Controller, Inject } from '@nestjs/common';
+import {
+  BadGatewayException,
+  Body,
+  Controller,
+  Inject,
+  InternalServerErrorException,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CurrentUser } from '../authentications/current.user';
+import { CreateOrder } from './orders.dto';
+import { UsersService } from '../authentications/services/users.service';
+import { ProductsService } from '../products/products.service';
+import { AuthGuardJwt } from '../../shared/guards/auth.guard';
+import { PaymentsService } from '../payments/payments.service';
+import { Order } from './orders.entity';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('orders')
 export class OrdersController {
-  @Inject(OrdersService)
-  private readonly service: OrdersService;
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly service: OrdersService,
+    private readonly productService: ProductsService,
+    private readonly paymentsService: PaymentsService,
+  ) {}
 
-  public postOrder(@CurrentUser() user: CurrentUser) {
-    // TODO: Cari product bds user id
-    // TODO: buat di service insert ke product order
-    // TODO: insert ke order totalnya
-    // TODO: insert ke payment status belum dibayar
-    // return this.service.createOrder()
+  @Post()
+  @UseGuards(AuthGuardJwt)
+  @ApiBearerAuth()
+  public async postOrder(
+    @CurrentUser() user: CurrentUser,
+    @Body() body: CreateOrder,
+  ) {
+    try {
+      const loggedUser = await this.usersService.getUserByEmail(user.email);
+      const products = await this.productService.getSomeProductById(
+        body.productsId,
+      );
+
+      const createdOrder = await this.service.createOrder({
+        user: loggedUser,
+        products: products,
+      });
+      await this.paymentsService.createInitialPayment(createdOrder);
+      return createdOrder.id;
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
   }
 }

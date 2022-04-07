@@ -4,6 +4,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
@@ -21,7 +22,6 @@ export class Product {
   @Column()
   public price: number;
 
-  @ManyToMany(() => Order)
-  @JoinTable()
+  @ManyToMany(() => Order, (order) => order.products)
   public orders: Order[];
 }

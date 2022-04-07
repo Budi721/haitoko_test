@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -9,7 +10,6 @@ import {
 import { Expose } from 'class-transformer';
 import { Product } from '../products/products.entity';
 import { User } from '../authentications/models/user.entity';
-import { Payment } from '../payments/payments.entity';
 
 @Entity()
 export class Order {
@@ -23,4 +23,8 @@ export class Order {
   @OneToOne(() => User)
   @JoinColumn()
   public user: User;
+
+  @ManyToMany(() => Product, (product) => product.orders)
+  @JoinTable()
+  public products: Product[];
 }
